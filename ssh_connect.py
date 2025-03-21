@@ -14,7 +14,7 @@ def create_table(json_output):
     print(tabulate(table_data, headers=headers, tablefmt="grid"))
     
 
-def ssh_connect(ip_address, guest_type_is, username, password):
+def ssh_connect(ip_address, guest_type_is, fleet_type_is, username, password):
     try:
         # Create an SSH client
         client = paramiko.SSHClient()
@@ -24,7 +24,7 @@ def ssh_connect(ip_address, guest_type_is, username, password):
         client.connect(ip_address, username=username, password=password)
         print(f"Successfully connected to {ip_address}")
         # Execute the curl command
-        command = f"curl -k 'https://vmxp.vikingship.local/VRC/MXP_RC.exe/Guest/?current_ship=true&showdatetime=true&guest_type={guest_type_is}'"
+        command = f"curl -k 'https://vmxp.vikingship.local/{fleet_type_is}/MXP_RC.exe/Guest/?current_ship=true&showdatetime=true&guest_type={guest_type_is}'"
         stdin, stdout, stderr = client.exec_command(command)
         json_output=json.loads(stdout.read().decode())
         #output = json.dumps(json_output, indent=4)
@@ -35,14 +35,15 @@ def ssh_connect(ip_address, guest_type_is, username, password):
         print(f"Failed to connect to {ip_address}: {e}")
 
 if __name__ == "__main__":
-    if len(sys.argv) != 5:
-        print("Usage: python ssh_connect.py <IP_ADDRESS> <GUEST_TYPE> <USERNAME> <PASSWORD>")
+    if len(sys.argv) != 6:
+        print("Usage: python ssh_connect.py <IP_ADDRESS> <GUEST_TYPE> <FLEET_TYPE> <USERNAME> <PASSWORD>")
         sys.exit(1)
     
     ip_address = sys.argv[1]
     guest_type_is = sys.argv[2]
-    username = sys.argv[3]
-    password = sys.argv[4]
+    fleet_type_is = sys.argv[3]
+    username = sys.argv[4]
+    password = sys.argv[5]
     
-    users_json = ssh_connect(ip_address, guest_type_is, username, password)
+    users_json = ssh_connect(ip_address, guest_type_is, fleet_type_is, username, password)
     create_table(users_json)
