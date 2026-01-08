@@ -9,10 +9,9 @@ def create_table(json_output):
     # Iterate through JSON and create tuples
     table_data = [(user["guest_id"], user["guest_type"], user["first_name"], user["last_name"], user["dob"], user["guest_booking"][0]["room_no"], user["guest_booking"][0]["start_time"], user["guest_booking"][0]["end_time"]) for user in json_output]
     # Sort table
-    #table_data.sort(key=lambda tup: tup[5]) 
+    table_data.sort(key=lambda tup: tup[5]) 
     # Show table
     print(tabulate(table_data, headers=headers, tablefmt="grid"))
-    
 
 def ssh_connect(ip_address, guest_type_is, fleet_type_is, username, password):
     try:
@@ -24,7 +23,7 @@ def ssh_connect(ip_address, guest_type_is, fleet_type_is, username, password):
         client.connect(ip_address, username=username, password=password)
         print(f"Successfully connected to {ip_address}")
         # Execute the curl command
-        command = f"curl -k 'https://vmxp.vikingship.local/{fleet_type_is}/MXP_RC.exe/Guest/?current_ship=true&showdatetime=true&guest_type={guest_type_is}'"
+        command = f"curl -k 'https://vmxp.vikingship.local/{fleet_type_is}/MXP_RC.exe/Guest/?current_ship=true&showdatetime=true&guest_type={guest_type_is}&limit=1000'"
         stdin, stdout, stderr = client.exec_command(command)
         json_output=json.loads(stdout.read().decode())
         #output = json.dumps(json_output, indent=4)
@@ -36,7 +35,7 @@ def ssh_connect(ip_address, guest_type_is, fleet_type_is, username, password):
 
 if __name__ == "__main__":
     if len(sys.argv) != 6:
-        print("Usage: python ssh_connect.py <IP_ADDRESS> <GUEST_TYPE> <FLEET_TYPE> <USERNAME> <PASSWORD>")
+        print("Usage: python read-mxp.py <IP_ADDRESS> <GUEST_TYPE> <FLEET_TYPE> <USERNAME> <PASSWORD>")
         sys.exit(1)
     
     ip_address = sys.argv[1]
