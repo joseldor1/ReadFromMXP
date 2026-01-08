@@ -9,7 +9,7 @@ def create_table(json_output):
     # Iterate through JSON and create tuples
     table_data = [(user["guest_id"], user["guest_type"], user["first_name"], user["last_name"], user["dob"], user["guest_booking"][0]["room_no"], user["guest_booking"][0]["start_time"], user["guest_booking"][0]["end_time"]) for user in json_output]
     # Sort table
-    table_data.sort(key=lambda tup: tup[5]) 
+    #table_data.sort(key=lambda tup: tup[5]) 
     # Show table
     print(tabulate(table_data, headers=headers, tablefmt="grid"))
     
